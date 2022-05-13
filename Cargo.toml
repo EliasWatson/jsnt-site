@@ -1,0 +1,12 @@
+[package]
+name = "jsnt-site"
+version = "0.1.0"
+description = "A static site generator with zero Javascript"
+authors = ["Elias Watson <contact@eliaswatson.dev>"]
+homepage = "https://jsnt.site"
+repository = "https://github.com/EliasWatson/jsnt-site"
+license = "MIT"
+license-file = "LICENSE"
+edition = "2021"
+
+[dependencies]
