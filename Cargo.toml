@@ -10,3 +10,5 @@ license-file = "LICENSE"
 edition = "2021"
 
 [dependencies]
+lazy_static = "1.4.0"
+regex = "1.5.5"
