@@ -6,6 +6,8 @@ This file only contains headings and paragraphs.
 
 And more text under the header.
 
+This is a separate paragraph under the same heading.
+
 ## Here is a sub-header
 
 Random text here.

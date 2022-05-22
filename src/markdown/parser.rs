@@ -1,7 +1,7 @@
-use crate::markdown::document::{Document, Element, InlineElement, Line};
+use crate::markdown::builder::ParagraphBuilder;
+use crate::markdown::document::{Document, Element, Line};
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::mem;
 
 macro_rules! return_if_some {
     ($a:expr) => {
@@ -14,31 +14,26 @@ macro_rules! return_if_some {
 
 pub fn parse(raw_text: &str) -> Document {
     let mut elements = vec![];
-    let mut current_paragraph: Vec<Line> = vec![];
+    let mut paragraph_builder = ParagraphBuilder::default();
 
     for line in raw_text.lines() {
         match parse_raw_line(line) {
             Some(element) => match element {
-                Element::Paragraph(paragraph_elements) => {
-                    current_paragraph.extend(paragraph_elements);
+                Element::Paragraph(lines) => {
+                    paragraph_builder.add_lines(lines);
                 }
                 _ => {
-                    if current_paragraph.len() > 0 {
-                        elements.push(Element::Paragraph(mem::replace(
-                            &mut current_paragraph,
-                            vec![],
-                        )));
-                    }
+                    paragraph_builder.finish(&mut elements);
                     elements.push(element);
                 }
             },
-            None => {}
+            None => {
+                paragraph_builder.finish(&mut elements);
+            }
         };
     }
 
-    if current_paragraph.len() > 0 {
-        elements.push(Element::Paragraph(current_paragraph));
-    }
+    paragraph_builder.finish(&mut elements);
 
     return Document { elements };
 }
@@ -92,7 +87,10 @@ mod test {
                         Line::from_str("This file only contains headings and paragraphs.")
                     ]),
                     Element::Header(1, Line::from_str("This is a second header")),
-                    Element::Paragraph(vec![Line::from_str("And more text under the header."),]),
+                    Element::Paragraph(vec![Line::from_str("And more text under the header.")]),
+                    Element::Paragraph(vec![Line::from_str(
+                        "This is a separate paragraph under the same heading."
+                    )]),
                     Element::Header(2, Line::from_str("Here is a sub-header")),
                     Element::Paragraph(vec![
                         Line::from_str("Random text here."),
