@@ -73,7 +73,7 @@ fn parse_line(line: &str) -> Line {
 
 #[cfg(test)]
 mod test {
-    use crate::markdown::document::{Element, InlineElement, Line};
+    use crate::markdown::document::{Document, Element, InlineElement, Line};
     use crate::markdown::parser::{parse, parse_header, parse_line};
     use std::fs;
 
@@ -82,7 +82,26 @@ mod test {
         let raw_text = fs::read_to_string("test_data/markdown/headings_paragraphs.md").unwrap();
         let parsed_doc = parse(&raw_text);
 
-        println!("{}", parsed_doc);
+        assert_eq!(
+            parsed_doc,
+            Document {
+                elements: vec![
+                    Element::Header(1, Line::from_str("Test of my markdown parser")),
+                    Element::Paragraph(vec![
+                        Line::from_str("This is a test file for my markdown parser."),
+                        Line::from_str("This file only contains headings and paragraphs.")
+                    ]),
+                    Element::Header(1, Line::from_str("This is a second header")),
+                    Element::Paragraph(vec![Line::from_str("And more text under the header."),]),
+                    Element::Header(2, Line::from_str("Here is a sub-header")),
+                    Element::Paragraph(vec![
+                        Line::from_str("Random text here."),
+                        Line::from_str("A second line of random text."),
+                        Line::from_str("A third line of random text."),
+                    ]),
+                ]
+            }
+        );
     }
 
     #[test]
