@@ -5,11 +5,11 @@ use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
 pub struct TemplateString {
-    sections: Vec<TemplateStringSection>,
+    pub sections: Vec<TemplateStringSection>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum TemplateStringSection {
+pub enum TemplateStringSection {
     Text(String),
     Variable(String),
     DefaultVariable(String, String),

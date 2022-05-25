@@ -2,6 +2,8 @@ use crate::template::template_errors::TemplateError;
 use crate::template::template_string::TemplateString;
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
+use std::fs;
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum TemplateElementType {
@@ -22,6 +24,31 @@ pub enum TemplateElement {
 #[derive(Debug, Clone)]
 pub struct TemplateElementTemplates {
     templates: HashMap<TemplateElementType, TemplateString>,
+}
+
+impl Default for TemplateElementTemplates {
+    fn default() -> Self {
+        TemplateElementTemplates {
+            templates: HashMap::from([
+                (
+                    TemplateElementType::Header,
+                    TemplateString::parse_string("<h{level}>{content}</h{level}>"),
+                ),
+                (
+                    TemplateElementType::Paragraph,
+                    TemplateString::parse_string("<p>{content}</p>"),
+                ),
+                (
+                    TemplateElementType::Line,
+                    TemplateString::parse_string("{content}"),
+                ),
+                (
+                    TemplateElementType::Text,
+                    TemplateString::parse_string("{content}"),
+                ),
+            ]),
+        }
+    }
 }
 
 impl TemplateElement {
@@ -91,9 +118,33 @@ pub fn render_element_list(
 }
 
 impl TemplateElementTemplates {
-    pub fn new() -> Self {
-        TemplateElementTemplates {
-            templates: HashMap::new(),
+    pub fn load(&mut self, file_stem: &str, path: &PathBuf) {
+        match file_stem {
+            "header" => {
+                self.templates.insert(
+                    TemplateElementType::Header,
+                    TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
+                );
+            }
+            "paragraph" => {
+                self.templates.insert(
+                    TemplateElementType::Paragraph,
+                    TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
+                );
+            }
+            "line" => {
+                self.templates.insert(
+                    TemplateElementType::Line,
+                    TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
+                );
+            }
+            "text" => {
+                self.templates.insert(
+                    TemplateElementType::Text,
+                    TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
+                );
+            }
+            _ => {}
         }
     }
 
