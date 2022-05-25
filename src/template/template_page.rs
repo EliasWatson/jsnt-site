@@ -1,9 +1,8 @@
 use crate::template::template_element::{
-    render_element_list, TemplateElement, TemplateElementTemplates, TemplateElementType,
+    render_element_list, TemplateElement, TemplateElementTemplates,
 };
 use crate::template::template_errors::TemplateError;
-use crate::template::template_string::TemplateString;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
 pub struct TemplatePage {

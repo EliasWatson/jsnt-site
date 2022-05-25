@@ -120,3 +120,36 @@ impl Display for TemplateElementType {
         )
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::template::template_element::{TemplateElement, TemplateElementType};
+
+    #[test]
+    fn test_template_element_to_type() {
+        assert_eq!(
+            TemplateElement::Header(0, vec![]).to_type(),
+            TemplateElementType::Header
+        );
+        assert_eq!(
+            TemplateElement::Paragraph(vec![]).to_type(),
+            TemplateElementType::Paragraph
+        );
+        assert_eq!(
+            TemplateElement::Line(vec![]).to_type(),
+            TemplateElementType::Line
+        );
+        assert_eq!(
+            TemplateElement::Text(String::new()).to_type(),
+            TemplateElementType::Text
+        );
+    }
+
+    #[test]
+    fn test_template_element_type_display() {
+        assert_eq!(format!("{}", TemplateElementType::Header), "Header");
+        assert_eq!(format!("{}", TemplateElementType::Paragraph), "Paragraph");
+        assert_eq!(format!("{}", TemplateElementType::Line), "Line");
+        assert_eq!(format!("{}", TemplateElementType::Text), "Text");
+    }
+}
