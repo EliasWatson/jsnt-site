@@ -4,7 +4,14 @@ _A static site generator with zero Javascript_
 ---
 
 ## Usage
-This project is currently in very early development and is in an unusable state.
+This project is currently in very early development and isn't really in a usable state.
+
+### Render Example
+```shell
+jsnt-site examples/basic_site/
+# or
+cargo run examples/basic_site/
+```
 
 ## Why no Javascript?
 First, let me clarify that I do not hate Javascript.
