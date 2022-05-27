@@ -11,6 +11,8 @@ pub enum TemplateElementType {
     Paragraph,
     Line,
     Text,
+    Italic,
+    Bold,
 }
 
 #[derive(Debug, Clone)]
@@ -19,6 +21,8 @@ pub enum TemplateElement {
     Paragraph(Vec<TemplateElement>),
     Line(Vec<TemplateElement>),
     Text(String),
+    Italic(Vec<TemplateElement>),
+    Bold(Vec<TemplateElement>),
 }
 
 #[derive(Debug, Clone)]
@@ -46,7 +50,29 @@ impl Default for TemplateElementTemplates {
                     TemplateElementType::Text,
                     TemplateString::parse_string("{content}"),
                 ),
+                (
+                    TemplateElementType::Italic,
+                    TemplateString::parse_string("<i>{content}</i>"),
+                ),
+                (
+                    TemplateElementType::Bold,
+                    TemplateString::parse_string("<b>{content}</b>"),
+                ),
             ]),
+        }
+    }
+}
+
+impl TemplateElementType {
+    fn from_str(s: &str) -> Option<Self> {
+        match s {
+            "header" => Some(TemplateElementType::Header),
+            "paragraph" => Some(TemplateElementType::Paragraph),
+            "line" => Some(TemplateElementType::Line),
+            "text" => Some(TemplateElementType::Text),
+            "italic" => Some(TemplateElementType::Italic),
+            "bold" => Some(TemplateElementType::Bold),
+            _ => None,
         }
     }
 }
@@ -58,6 +84,8 @@ impl TemplateElement {
             TemplateElement::Paragraph(_) => TemplateElementType::Paragraph,
             TemplateElement::Line(_) => TemplateElementType::Line,
             TemplateElement::Text(_) => TemplateElementType::Text,
+            TemplateElement::Italic(_) => TemplateElementType::Italic,
+            TemplateElement::Bold(_) => TemplateElementType::Bold,
         }
     }
 
@@ -81,7 +109,9 @@ impl TemplateElement {
                     &render_element_list(elements, templates, " ", true)?,
                 );
             }
-            TemplateElement::Line(elements) => {
+            TemplateElement::Line(elements)
+            | TemplateElement::Italic(elements)
+            | TemplateElement::Bold(elements) => {
                 template.set(
                     "content",
                     &render_element_list(elements, templates, "", false)?,
@@ -119,33 +149,12 @@ pub fn render_element_list(
 
 impl TemplateElementTemplates {
     pub fn load(&mut self, file_stem: &str, path: &PathBuf) {
-        match file_stem {
-            "header" => {
-                self.templates.insert(
-                    TemplateElementType::Header,
-                    TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
-                );
-            }
-            "paragraph" => {
-                self.templates.insert(
-                    TemplateElementType::Paragraph,
-                    TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
-                );
-            }
-            "line" => {
-                self.templates.insert(
-                    TemplateElementType::Line,
-                    TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
-                );
-            }
-            "text" => {
-                self.templates.insert(
-                    TemplateElementType::Text,
-                    TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
-                );
-            }
-            _ => {}
-        }
+        TemplateElementType::from_str(file_stem).map(|element_type| {
+            self.templates.insert(
+                element_type,
+                TemplateString::parse_string(&fs::read_to_string(path).unwrap()),
+            )
+        });
     }
 
     pub fn add(&mut self, element_type: TemplateElementType, template: TemplateString) {
@@ -167,6 +176,8 @@ impl Display for TemplateElementType {
                 TemplateElementType::Paragraph => "Paragraph",
                 TemplateElementType::Line => "Line",
                 TemplateElementType::Text => "Text",
+                TemplateElementType::Italic => "Italic",
+                TemplateElementType::Bold => "Bold",
             }
         )
     }
@@ -194,6 +205,14 @@ mod test {
             TemplateElement::Text(String::new()).to_type(),
             TemplateElementType::Text
         );
+        assert_eq!(
+            TemplateElement::Italic(vec![]).to_type(),
+            TemplateElementType::Italic
+        );
+        assert_eq!(
+            TemplateElement::Bold(vec![]).to_type(),
+            TemplateElementType::Bold
+        );
     }
 
     #[test]
@@ -202,5 +221,7 @@ mod test {
         assert_eq!(format!("{}", TemplateElementType::Paragraph), "Paragraph");
         assert_eq!(format!("{}", TemplateElementType::Line), "Line");
         assert_eq!(format!("{}", TemplateElementType::Text), "Text");
+        assert_eq!(format!("{}", TemplateElementType::Italic), "Italic");
+        assert_eq!(format!("{}", TemplateElementType::Bold), "Bold");
     }
 }

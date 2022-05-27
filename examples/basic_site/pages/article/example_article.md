@@ -1,16 +1,16 @@
 # Example Article
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+Lorem ipsum dolor sit amet, **consectetur adipiscing elit**, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
 Nam at lectus urna duis convallis
 Vestibulum lorem sed risus ultricies tristique nulla aliquet
 Non enim praesent elementum facilisis leo
 Lorem ipsum dolor sit amet consectetur
-Nulla malesuada pellentesque elit eget gravida
+Nulla *malesuada* pellentesque elit eget gravida
 Tellus elementum sagittis vitae et leo duis ut diam
-Sed risus pretium quam vulputate dignissim suspendisse
+_Sed risus pretium_ quam vulputate dignissim suspendisse
 Urna id volutpat lacus laoreet non curabitur gravida
 Aliquam sem fringilla ut morbi
-Interdum consectetur libero id faucibus nisl
+Interdum __consectetur libero id faucibus nisl__
 Auctor eu augue ut lectus arcu bibendum.
 
 Ridiculus mus mauris vitae ultricies
@@ -19,13 +19,13 @@ Non diam phasellus vestibulum lorem sed
 In hac habitasse platea dictumst vestibulum
 Tincidunt tortor aliquam nulla facilisi cras fermentum odio
 Lacinia quis vel eros donec ac
-Cum sociis natoque penatibus et magnis dis parturient montes nascetur
-Egestas integer eget aliquet nibh praesent tristique magna sit
+Cum **sociis natoque** penatibus et magnis _dis parturient_ montes nascetur
+Egestas integer **eget aliquet** **nibh praesent** tristique magna sit
 Donec pretium vulputate sapien nec
-Magna etiam tempor orci eu lobortis elementum
+Magna etiam _tempor orci__eu_ lobortis elementum
 Dictumst vestibulum rhoncus est pellentesque elit ullamcorper
 In cursus turpis massa tincidunt dui
-Platea dictumst quisque sagittis purus
+Platea **dictumst** *quisque* sagittis purus
 Quis vel eros donec ac odio tempor.
 
 Eget egestas purus viverra accumsan in nisl
