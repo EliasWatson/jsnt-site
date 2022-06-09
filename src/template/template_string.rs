@@ -1,6 +1,7 @@
 use crate::template::template_errors::TemplateError;
+use crate::util::regex_split::split_by_regex;
+use fancy_regex::Regex;
 use lazy_static::lazy_static;
-use regex::Regex;
 use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
@@ -21,31 +22,14 @@ impl TemplateString {
             static ref VARIABLE_PATTERN: Regex = Regex::new(r"\{([\w\d\-_]+)\}").unwrap();
         }
 
-        let mut sections = vec![];
-
-        let mut prev_end_index = 0;
-        for cap in VARIABLE_PATTERN.captures_iter(s) {
-            let entire_match = cap.get(0).unwrap();
-
-            if entire_match.start() > prev_end_index {
-                sections.push(TemplateStringSection::Text(String::from(
-                    &s[prev_end_index..entire_match.start()],
-                )));
-            }
-
-            prev_end_index = entire_match.end();
-
-            sections.push(TemplateStringSection::Variable(String::from(
-                cap.get(1).unwrap().as_str(),
-            )));
-        }
-
-        // This is `s.len()` not `s.len() - 1` because end_index is always one past the last variable
-        if prev_end_index < s.len() {
-            sections.push(TemplateStringSection::Text(String::from(
-                &s[prev_end_index..],
-            )));
-        }
+        let sections = split_by_regex(
+            s,
+            &*VARIABLE_PATTERN,
+            |captures| {
+                TemplateStringSection::Variable(String::from(captures.get(1).unwrap().as_str()))
+            },
+            |text| TemplateStringSection::Text(String::from(text)),
+        );
 
         return TemplateString { sections };
     }

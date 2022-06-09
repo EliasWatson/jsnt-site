@@ -1,6 +1,7 @@
 mod markdown;
 mod pages;
 mod template;
+mod util;
 
 use crate::pages::Pages;
 use crate::template::template::Template;

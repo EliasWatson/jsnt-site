@@ -1,6 +1,6 @@
 [package]
 name = "jsnt-site"
-version = "0.2.0"
+version = "0.3.0"
 description = "A static site generator with zero Javascript"
 authors = ["Elias Watson <contact@eliaswatson.dev>"]
 homepage = "https://jsnt.site"
@@ -12,4 +12,4 @@ edition = "2021"
 [dependencies]
 clap = { version = "3.1", features = ["derive"] }
 lazy_static = "1.4.0"
-regex = "1.5.5"
+fancy-regex = "0.10.0"

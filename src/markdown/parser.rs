@@ -1,9 +1,19 @@
 use crate::markdown::builder::ParagraphBuilder;
-use crate::markdown::document::{Document, Element, Line};
+use crate::markdown::document::{Document, Element, InlineElement, Line};
+use crate::util::regex_split::split_by_regex;
+use fancy_regex::Regex;
 use lazy_static::lazy_static;
-use regex::Regex;
 
 macro_rules! return_if_some {
+    ($a:expr) => {
+        match $a {
+            Some(x) => return x,
+            None => {}
+        }
+    };
+}
+
+macro_rules! return_option_if_some {
     ($a:expr) => {
         match $a {
             Some(x) => return Some(x),
@@ -43,7 +53,7 @@ fn parse_raw_line(line: &str) -> Option<Element> {
         return None;
     }
 
-    return_if_some!(parse_header(line));
+    return_option_if_some!(parse_header(line));
 
     return Some(Element::Paragraph(vec![parse_line(line)]));
 }
@@ -53,7 +63,10 @@ fn parse_header(line: &str) -> Option<Element> {
         static ref HEADER_PATTERN: Regex = Regex::new(r"^(#+)\s+(.*)$").unwrap();
     }
 
-    let caps = HEADER_PATTERN.captures(line)?;
+    let caps = match HEADER_PATTERN.captures(line) {
+        Ok(c) => c,
+        Err(_) => return None,
+    }?;
 
     return Some(Element::Header(
         caps.get(1).unwrap().as_str().len() as u32,
@@ -62,8 +75,42 @@ fn parse_header(line: &str) -> Option<Element> {
 }
 
 fn parse_line(line: &str) -> Line {
-    // TODO: Parse links, bold, italic, etc
-    Line::from_str(line)
+    if line.trim().len() == 0 {
+        return Line::from_str("");
+    }
+
+    return_if_some!(parse_emphasis(line));
+
+    return Line::from_str(line);
+}
+
+fn parse_emphasis(line: &str) -> Option<Line> {
+    lazy_static! {
+        static ref EMPHASIS_PATTERN: Regex = Regex::new(r"((?:\*|_){1,2})(.+?)\1").unwrap();
+    }
+
+    match EMPHASIS_PATTERN.is_match(line) {
+        Ok(b) => {
+            if !b {
+                return None;
+            }
+        }
+        Err(_) => return None,
+    }
+
+    let elements = split_by_regex(
+        line,
+        &*EMPHASIS_PATTERN,
+        |captures| {
+            InlineElement::Emphasis(
+                captures.get(1).unwrap().as_str().len() as u32,
+                parse_line(captures.get(2).unwrap().as_str()),
+            )
+        },
+        |text| InlineElement::Text(text.to_string()), // TODO
+    );
+
+    return Some(Line { elements });
 }
 
 #[cfg(test)]

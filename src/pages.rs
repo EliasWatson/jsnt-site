@@ -121,5 +121,10 @@ fn markdown_line_to_template_elements(line: &Line) -> Vec<TemplateElement> {
 fn markdown_inline_element_to_template_element(element: &InlineElement) -> TemplateElement {
     match element {
         InlineElement::Text(text) => TemplateElement::Text(text.clone()),
+        InlineElement::Emphasis(level, line) => match level {
+            0 => unreachable!(),
+            1 => TemplateElement::Italic(markdown_line_to_template_elements(line)),
+            _ => TemplateElement::Bold(markdown_line_to_template_elements(line)),
+        },
     }
 }

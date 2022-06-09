@@ -6,7 +6,7 @@ pub struct Document {
     pub elements: Vec<Element>,
 }
 
-#[derive(Debug, Default, Eq, PartialEq)]
+#[derive(Debug, Default, Eq, PartialEq, Clone)]
 pub struct Line {
     pub elements: Vec<InlineElement>,
 }
@@ -17,9 +17,10 @@ pub enum Element {
     Paragraph(Vec<Line>),
 }
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum InlineElement {
     Text(String),
+    Emphasis(u32, Line),
 }
 
 impl Line {
@@ -71,6 +72,7 @@ impl fmt::Display for InlineElement {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             InlineElement::Text(s) => write!(f, "{}", s),
+            InlineElement::Emphasis(level, line) => write!(f, "Emphasis[{}]({})", level, line),
         }
     }
 }
